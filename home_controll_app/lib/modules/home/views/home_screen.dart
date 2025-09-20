@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_controll_app/components/sensor_card.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -31,19 +32,19 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildGauge(
-                      title: 'Temperatura',
+                    SensorCard(
+                      title: "Temperatura",
+                      icon: Icons.thermostat,
                       value: vm.data.temperature,
-                      max: 50,
                       unit: '°C',
-                      color: Colors.orange,
+                      max: 50
                     ),
-                    _buildGauge(
-                      title: 'Umidade',
+                    SensorCard(
+                      title: "Umidade",
+                      icon: Icons.water_drop,
                       value: vm.data.humidity,
-                      max: 100,
                       unit: '%',
-                      color: Colors.blue,
+                      max: 100
                     ),
                   ],
                 ),

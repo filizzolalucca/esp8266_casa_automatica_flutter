@@ -15,8 +15,7 @@ class HomeViewModel extends ChangeNotifier {
   final List<RoomItem> _rooms = [
     RoomItem(id: '1', name: 'Sala'),
     RoomItem(id: '2', name: 'Cozinha'),
-    RoomItem(id: '3', name: 'Quarto'),
-    RoomItem(id: '4', name: 'Quarto de Visita'),
+    RoomItem(id: '3', name: 'Quarto')
   ];
   List<RoomItem> get rooms => List.unmodifiable(_rooms);
 
