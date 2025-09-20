@@ -27,15 +27,22 @@ class SensorCard extends StatelessWidget {
       width: 150,
       height: 180,
       decoration: BoxDecoration(
-        color: Colors.black87,
+        color: const Color(0xFF292826), // fundo do card
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.shade700, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Ícone + texto em linha
             Row(
               children: [
                 Icon(icon, color: Colors.white70, size: 22),
@@ -47,8 +54,6 @@ class SensorCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-
-            // 🔹 Gauge embaixo
             Expanded(
               child: SfRadialGauge(
                 axes: [

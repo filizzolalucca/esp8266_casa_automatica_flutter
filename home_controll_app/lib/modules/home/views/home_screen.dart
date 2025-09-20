@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:home_controll_app/components/room_card.dart';
 import 'package:home_controll_app/components/sensor_card.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,137 +12,97 @@ class HomeScreen extends StatelessWidget {
     return Consumer<HomeViewModel>(
       builder: (context, vm, _) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Casa Inteligente'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  // depois vai para a tela de configurações
-                  Navigator.pushNamed(context, '/config');
-                },
+          backgroundColor: const Color(0xFF1B1B19),
+          body: CustomScrollView(
+            slivers: [
+              // --- AppBar fixa ---
+              SliverAppBar(
+                pinned: true,
+                backgroundColor: const Color(0xFF292826),
+                elevation: 0,
+                centerTitle: true,
+                title: const Text('Meus cômodOOOos'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications),
+                    onPressed: () => Navigator.pushNamed(context, '/notifications'),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () => Navigator.pushNamed(context, '/config'),
+                  ),
+                ],
               ),
-            ],
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // --- GRÁFICOS ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+
+              // --- Sensor Cards Grid ---
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 por linha
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 1, // quadrado
+                  ),
+                  delegate: SliverChildListDelegate([
                     SensorCard(
                       title: "Temperatura",
                       icon: Icons.thermostat,
                       value: vm.data.temperature,
                       unit: '°C',
-                      max: 50
+                      max: 50,
                     ),
                     SensorCard(
                       title: "Umidade",
                       icon: Icons.water_drop,
                       value: vm.data.humidity,
                       unit: '%',
-                      max: 100
+                      useGradient: false,
+                      max: 100,
+                      solidColor: Colors.cyan,
                     ),
-                  ],
+                  ]),
                 ),
-                const SizedBox(height: 24),
+              ),
 
-                // --- QUARTOS ---
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Quartos',
-                    style: Theme.of(context).textTheme.titleLarge,
+              // --- Divider ---
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverToBoxAdapter(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 24),
+                    height: 2,
+                    color: Colors.grey.shade700,
                   ),
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 120,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: vm.rooms.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 12),
-                    itemBuilder: (context, i) {
+              ),
+
+              // --- Room Cards Grid ---
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) {
                       final room = vm.rooms[i];
-                      return Container(
-                        width: 160,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Center(
-                          child: Text(
-                            room.name,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
+                      return GestureDetector(
+                        onTap: () => print('Quarto clicado: ${room.id}'),
+                        child: RoomCard(room: room),
                       );
                     },
+                    childCount: vm.rooms.length,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 1,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
-    );
-  }
-
-  Widget _buildGauge({
-    required String title,
-    required double value,
-    required double max,
-    required String unit,
-    required Color color,
-  }) {
-    return SizedBox(
-      height: 180,
-      width: 150,
-      child: Column(
-        children: [
-          Expanded(
-            child: SfRadialGauge(
-              axes: [
-                RadialAxis(
-                  minimum: 0,
-                  maximum: max,
-                  startAngle: 180,
-                  endAngle: 0,
-                  showLabels: false,
-                  showTicks: false,
-                  axisLineStyle: AxisLineStyle(
-                    thickness: 0.15,
-                    thicknessUnit: GaugeSizeUnit.factor,
-                    color: Colors.grey.shade300,
-                  ),
-                  pointers: [
-                    RangePointer(
-                      value: value,
-                      width: 0.15,
-                      sizeUnit: GaugeSizeUnit.factor,
-                      color: color,
-                    ),
-                  ],
-                  annotations: [
-                    GaugeAnnotation(
-                      widget: Text(
-                        '${value.toStringAsFixed(1)} $unit',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      positionFactor: 0.1,
-                      angle: 90,
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Text(title),
-        ],
-      ),
     );
   }
 }

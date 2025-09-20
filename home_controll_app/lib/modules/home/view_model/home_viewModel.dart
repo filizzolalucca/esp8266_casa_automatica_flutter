@@ -13,9 +13,9 @@ class HomeViewModel extends ChangeNotifier {
   SensorData get data => _data;
 
   final List<RoomItem> _rooms = [
-    RoomItem(id: '1', name: 'Sala'),
-    RoomItem(id: '2', name: 'Cozinha'),
-    RoomItem(id: '3', name: 'Quarto')
+    RoomItem(id: '1', name: 'Quarto', type: RoomType.bedroom),
+    RoomItem(id: '2', name: 'Cozinha', type: RoomType.kitchen),
+    RoomItem(id: '3', name: 'Sala', type: RoomType.livingRoom),
   ];
   List<RoomItem> get rooms => List.unmodifiable(_rooms);
 
