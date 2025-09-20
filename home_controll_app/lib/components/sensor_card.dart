@@ -44,13 +44,19 @@ class SensorCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: Colors.white70, size: 22),
+                Icon(icon, color: Colors.white, size: 22),
                 const SizedBox(width: 6),
                 Text(
                   title,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                ),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold, // deixa o título em negrito
+                    ),
+                  ),
+
               ],
             ),
             const SizedBox(height: 8),
