@@ -27,35 +27,21 @@ class HomeScreen extends StatelessWidget {
             centerTitle: true,
             backgroundColor: const Color(0xFF292826),
             elevation: 0,
-            scrolledUnderElevation: 0, // 👈 impede mudar de cor ao scrollar
+            scrolledUnderElevation: 0,
             actions: [
               IconButton(
-                icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.white
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/notifications');
-                },
+                icon: const Icon(Icons.notifications, color: Colors.white),
+                onPressed: () => Navigator.pushNamed(context, '/notifications'),
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.settings,
-                  color: Colors.white
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/config');
-                },
+                icon: const Icon(Icons.settings, color: Colors.white),
+                onPressed: () => Navigator.pushNamed(context, '/config'),
               ),
             ],
           ),
           body: CustomScrollView(
             slivers: [
-             
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 150),
-              ),
-
+              const SliverToBoxAdapter(child: SizedBox(height: 150)),
               SliverPadding(
                 padding: const EdgeInsets.all(24),
                 sliver: SliverGrid.count(
@@ -82,26 +68,20 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-               // 🔹 Divider entre sensores e cômodos
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Divider(thickness: 1, color: Colors.grey.shade700),
                 ),
               ),
-
-              // 🔹 Grid de Quartos com seu RoomCard
               SliverPadding(
                 padding: const EdgeInsets.all(24),
                 sliver: SliverGrid(
-                 delegate: SliverChildBuilderDelegate(
+                  delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final room = vm.rooms[index];
                       return GestureDetector(
-                        onTap: () {
-                          _showRoomDialog(context, room, vm);
-                        },
+                        onTap: () => _showRoomDialog(context, room, vm),
                         child: RoomCard(room: room),
                       );
                     },
@@ -121,68 +101,62 @@ class HomeScreen extends StatelessWidget {
       },
     );
   }
+
   void _showRoomDialog(BuildContext context, RoomItem room, HomeViewModel vm) {
     showDialog(
       context: context,
-      barrierDismissible: true, // Permite fechar clicando fora
+      barrierDismissible: true,
       builder: (_) {
-        final isOn = vm.lights[room.feedKey] ?? false;
+        return Consumer<HomeViewModel>(
+          builder: (context, vm, child) {
+            final isOn = vm.lights[room.feedKey] ?? false;
 
-        return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          backgroundColor: const Color(0xFF2A2A28),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // --- Ícone e nome do cômodo centralizados ---
-                Column(
+            return Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              backgroundColor: const Color(0xFF2A2A28),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      room.icon,
-                      color: Colors.white,
-                      size: 48,
+                    Column(
+                      children: [
+                        Icon(room.icon, color: Colors.white, size: 48),
+                        const SizedBox(height: 12),
+                        Text(
+                          room.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      room.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 24),
+                    GestureDetector(
+                      onTap: () => vm.toggleLight(room.feedKey),
+                      child: Container(
+                        height: 64,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: isOn ? Colors.blue : Colors.grey.shade700,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.lightbulb,
+                          color: isOn ? Colors.amber : Colors.white,
+                          size: 36,
+                        ),
                       ),
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 24),
-
-                // --- Botão de Luz ---
-                GestureDetector(
-                  onTap: () {
-                    vm.toggleLight(room.feedKey);
-                  },
-                  child: Container(
-                    height: 64,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: isOn ? Colors.blue : Colors.grey.shade700,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.lightbulb,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
   }
-
 }
