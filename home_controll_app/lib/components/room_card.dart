@@ -6,17 +6,6 @@ class RoomCard extends StatelessWidget {
 
   const RoomCard({super.key, required this.room});
 
-  IconData get icon {
-    switch (room.type) {
-      case RoomType.bedroom:
-        return Icons.bed;
-      case RoomType.livingRoom:
-        return Icons.tv;
-      case RoomType.kitchen:
-        return Icons.restaurant;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +26,7 @@ class RoomCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.white, size: 32),
+          Icon(room.icon, color: Colors.white, size: 32),
           const SizedBox(height: 8),
           Text(
             room.name,

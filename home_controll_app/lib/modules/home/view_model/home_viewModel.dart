@@ -19,6 +19,10 @@ class HomeViewModel extends ChangeNotifier {
   ];
   List<RoomItem> get rooms => List.unmodifiable(_rooms);
 
+  // 🔹 Estado das luzes (true = ligada, false = desligada)
+  final Map<String, bool> _lights = {};
+  Map<String, bool> get lights => _lights;
+
   HomeViewModel() {
     _connect();
   }
@@ -27,6 +31,12 @@ class HomeViewModel extends ChangeNotifier {
     await _mqtt.connect(); // conecta em segundo plano
     _mqtt.subscribe(AdafruitUtils.feedTemperatura);
     _mqtt.subscribe(AdafruitUtils.feedUmidade);
+
+
+    // Increve nas luzes
+    _mqtt.subscribe(AdafruitUtils.feedL1);
+    _mqtt.subscribe(AdafruitUtils.feedL2);
+    _mqtt.subscribe(AdafruitUtils.feedL3);
 
     _mqtt.messages.listen((message) {
       message.forEach((topic, value) {
@@ -40,9 +50,26 @@ class HomeViewModel extends ChangeNotifier {
             temperature: _data.temperature,
             humidity: double.tryParse(value) ?? 0,
           );
+        } else if (
+          topic == AdafruitUtils.feedL1 ||
+          topic == AdafruitUtils.feedL2 ||
+          topic == AdafruitUtils.feedL3) {
+            _lights[topic] = value == "ON";
         }
       });
       notifyListeners();
     });
+  }
+
+  // 🔹 Alterna estado da luz
+  void toggleLight(String roomFeedKey) {
+    print("chega aqui rooomId: $roomFeedKey");
+    final current = _lights[roomFeedKey] ?? false;
+    final newState = !current;
+
+    print("Trocando $roomFeedKey para ${newState ? "ON" : "OFF"}");
+    _lights[roomFeedKey] = newState;
+    _mqtt.publish(roomFeedKey, newState ? "1" : "0");
+    notifyListeners();
   }
 }

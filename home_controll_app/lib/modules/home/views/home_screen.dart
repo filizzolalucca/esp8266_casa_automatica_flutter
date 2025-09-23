@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_controll_app/modules/home/models/room_item.dart';
 import 'package:provider/provider.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
 import 'package:home_controll_app/components/sensor_card.dart';
@@ -75,6 +76,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.water_drop,
                       value: vm.data.humidity,
                       unit: "%",
+                      useGradient: false,
                       max: 100,
                     ),
                   ],
@@ -98,8 +100,7 @@ class HomeScreen extends StatelessWidget {
                       final room = vm.rooms[index];
                       return GestureDetector(
                         onTap: () {
-                          print('Quarto clicado: ${room.id}');
-                          // 👉 aqui você pode chamar Navigator.pushNamed(context, '/detalhes', arguments: room);
+                          _showRoomDialog(context, room, vm);
                         },
                         child: RoomCard(room: room),
                       );
@@ -120,4 +121,68 @@ class HomeScreen extends StatelessWidget {
       },
     );
   }
+  void _showRoomDialog(BuildContext context, RoomItem room, HomeViewModel vm) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Permite fechar clicando fora
+      builder: (_) {
+        final isOn = vm.lights[room.feedKey] ?? false;
+
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: const Color(0xFF2A2A28),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // --- Ícone e nome do cômodo centralizados ---
+                Column(
+                  children: [
+                    Icon(
+                      room.icon,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      room.name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // --- Botão de Luz ---
+                GestureDetector(
+                  onTap: () {
+                    vm.toggleLight(room.feedKey);
+                  },
+                  child: Container(
+                    height: 64,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: isOn ? Colors.blue : Colors.grey.shade700,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.lightbulb,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }

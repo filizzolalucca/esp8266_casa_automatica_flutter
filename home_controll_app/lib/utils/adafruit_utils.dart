@@ -9,6 +9,7 @@ class AdafruitUtils {
   static const String feedUmidade = "sensorumidade";
   static const String feedL1 = "l1";
   static const String feedL2 = "l2";
+  static const String feedL3 = "l3";
   static const String feedS1 = "s1";
 
   static String topic(String feed) => "$username/feeds/$feed";
