@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:home_controll_app/components/text_app.dart';
 import 'package:home_controll_app/modules/home/models/room_item.dart';
 import 'package:home_controll_app/modules/home/models/sensor_data.dart';
+import 'package:home_controll_app/modules/home/views/componets/home_app_bar.dart';
 import 'package:home_controll_app/utils/color_pallete.dart';
 import 'package:provider/provider.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
-import 'package:home_controll_app/components/sensor_card.dart';
-import 'package:home_controll_app/components/room_card.dart';
+import 'package:home_controll_app/modules/home/views/componets/sensor_card.dart';
+import 'package:home_controll_app/modules/home/views/componets/room_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -18,31 +19,7 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           extendBodyBehindAppBar: true,
           backgroundColor: const Color(0xFF1B1B19),
-          appBar: AppBar(
-            title: const Text(
-              "Meus cômodos", 
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            centerTitle: true,
-            backgroundColor: AppColors.background,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.white),
-                onPressed: () => Navigator.pushNamed(context, '/notifications'),
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.white),
-                onPressed: () => Navigator.pushNamed(context, '/config'),
-              ),
-            ],
-          ),
+          appBar: const CustomHomeAppBar(),
           body: CustomScrollView(
             slivers: [
               const SliverToBoxAdapter(child: SizedBox(height: 150)),
