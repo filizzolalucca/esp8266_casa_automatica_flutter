@@ -1,25 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:home_controll_app/components/text_app.dart';
+import 'package:home_controll_app/modules/home/models/sensor_data.dart';
+import 'package:home_controll_app/utils/color_pallete.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
+
 class SensorCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
+  final SensorType type;
   final double value;
   final String unit;
   final double max;
-  final bool useGradient;
-  final Color solidColor;
 
   const SensorCard({
     super.key,
-    required this.title,
-    required this.icon,
+    required this.type,
     required this.value,
     required this.unit,
     required this.max,
-    this.useGradient = true,
-    this.solidColor = Colors.orange,
   });
+
+  SweepGradient _getGradient() {
+    switch (type) {
+      case SensorType.temperature:
+        return const SweepGradient(
+          colors: [
+            AppColors.temperatureStart,
+            AppColors.temperatureMiddle,
+            AppColors.temperatureEnd,
+          ],
+          stops: [0.0, 0.5, 1.0],
+        );
+      case SensorType.humidity:
+        return const SweepGradient(
+          colors: [
+            AppColors.humidityStart,
+            AppColors.humidityMiddle,
+            AppColors.humidityEnd,
+          ],
+          stops: [0.0, 0.5, 1.0],
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +48,14 @@ class SensorCard extends StatelessWidget {
       width: 150,
       height: 180,
       decoration: BoxDecoration(
-        color: const Color(0xFF292826), // fundo do card
+        color: AppColors.black33,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.grey.shade700, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -46,17 +67,9 @@ class SensorCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: Colors.white, size: 22),
+                Icon(type.icon, color: AppColors.icon, size: 25),
                 const SizedBox(width: 6),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold, // deixa o título em negrito
-                    ),
-                  ),
-
+                TextApp(text: type.displayName),
               ],
             ),
             const SizedBox(height: 8),
@@ -71,30 +84,25 @@ class SensorCard extends StatelessWidget {
                     showTicks: false,
                     showLabels: false,
                     axisLineStyle: AxisLineStyle(
-                      thickness: 0.15,
+                      thickness: 0.25,
                       thicknessUnit: GaugeSizeUnit.factor,
                       color: Colors.grey.shade800,
                     ),
                     pointers: [
                       RangePointer(
                         value: value,
-                        width: 0.15,
+                        width: 0.25,
                         sizeUnit: GaugeSizeUnit.factor,
-                        gradient: useGradient
-                            ? const SweepGradient(
-                                colors: [Colors.blue, Colors.green, Colors.orange],
-                              )
-                            : null,
-                        color: useGradient ? null : solidColor,
+                        gradient: _getGradient(),
+                        color: null,
                       ),
                     ],
                     annotations: [
                       GaugeAnnotation(
-                        widget: Text(
-                          '${value.toStringAsFixed(0)}$unit',
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
-                        ),
+                        widget: TextApp(
+                          text: '${value.toStringAsFixed(0)}$unit',
+                          fontSize: 18,
+                          ),
                         positionFactor: 0.1,
                         angle: 90,
                       ),

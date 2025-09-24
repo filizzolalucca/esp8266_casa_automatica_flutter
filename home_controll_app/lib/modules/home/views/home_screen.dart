@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:home_controll_app/components/text_app.dart';
 import 'package:home_controll_app/modules/home/models/room_item.dart';
+import 'package:home_controll_app/modules/home/models/sensor_data.dart';
+import 'package:home_controll_app/utils/color_pallete.dart';
 import 'package:provider/provider.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
 import 'package:home_controll_app/components/sensor_card.dart';
@@ -20,12 +23,13 @@ class HomeScreen extends StatelessWidget {
               "Meus cômodos", 
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 16,
+                fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
               ),
             ),
             centerTitle: true,
-            backgroundColor: const Color(0xFF292826),
+            backgroundColor: AppColors.background,
             elevation: 0,
             scrolledUnderElevation: 0,
             actions: [
@@ -42,38 +46,7 @@ class HomeScreen extends StatelessWidget {
           body: CustomScrollView(
             slivers: [
               const SliverToBoxAdapter(child: SizedBox(height: 150)),
-              SliverPadding(
-                padding: const EdgeInsets.all(24),
-                sliver: SliverGrid.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.2,
-                  children: [
-                    SensorCard(
-                      title: "Temperatura",
-                      icon: Icons.thermostat,
-                      value: vm.data.temperature,
-                      unit: "°C",
-                      max: 50,
-                    ),
-                    SensorCard(
-                      title: "Umidade",
-                      icon: Icons.water_drop,
-                      value: vm.data.humidity,
-                      unit: "%",
-                      useGradient: false,
-                      max: 100,
-                    ),
-                  ],
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Divider(thickness: 1, color: Colors.grey.shade700),
-                ),
-              ),
+
               SliverPadding(
                 padding: const EdgeInsets.all(24),
                 sliver: SliverGrid(
@@ -93,6 +66,35 @@ class HomeScreen extends StatelessWidget {
                     mainAxisSpacing: 12,
                     childAspectRatio: 1,
                   ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Divider(thickness: 1, color: Colors.grey.shade700),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(24),
+                sliver: SliverGrid.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.2,
+                  children: [
+                    SensorCard(
+                      type: SensorType.temperature,
+                      value: vm.data.temperature,
+                      unit: "°C",
+                      max: 50,
+                    ),
+                    SensorCard(
+                      type: SensorType.humidity,
+                      value: vm.data.humidity,
+                      unit: "%",
+                      max: 100,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -123,14 +125,7 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Icon(room.icon, color: Colors.white, size: 48),
                         const SizedBox(height: 12),
-                        Text(
-                          room.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        TextApp(text: room.name),
                       ],
                     ),
                     const SizedBox(height: 24),
