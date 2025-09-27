@@ -91,34 +91,49 @@ class HomeScreen extends StatelessWidget {
             final isOn = vm.lights[room.feedKey] ?? false;
 
             return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              backgroundColor: const Color(0xFF2A2A28),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              backgroundColor: const Color(0xFF2A2A28), // fundo escuro
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      children: [
-                        Icon(room.icon, color: Colors.white, size: 48),
-                        const SizedBox(height: 12),
-                        TextApp(text: room.name),
-                      ],
+                    // 🔹 Card superior (ícone + nome)
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(room.icon, color: Colors.white, size: 40),
+                          const SizedBox(height: 8),
+                          TextApp(
+                            text:  room.name, 
+                            fontSize: 24
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
+
+                    // 🔹 Botão de luz (card grande)
                     GestureDetector(
                       onTap: () => vm.toggleLight(room.feedKey),
                       child: Container(
-                        height: 64,
+                        height: 120,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: isOn ? Colors.blue : Colors.grey.shade700,
-                          borderRadius: BorderRadius.circular(12),
+                          color: isOn ? Colors.blue : Colors.grey.shade800,
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
                           Icons.lightbulb,
                           color: isOn ? Colors.amber : Colors.white,
-                          size: 36,
+                          size: 48,
                         ),
                       ),
                     ),
@@ -131,4 +146,5 @@ class HomeScreen extends StatelessWidget {
       },
     );
   }
+
 }
