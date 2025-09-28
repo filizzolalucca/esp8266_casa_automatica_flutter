@@ -28,20 +28,35 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
-      title: TextApp(text: title, fontSize: 20,),
+      title: Semantics(
+        label: title,
+        child: TextApp(text: title, fontSize: 20),
+      ),
       centerTitle: true,
-      leading: IconButton(
-        icon: Icon(notificationsIcon, color: AppColors.icon, size: 36,),
-        onPressed: onNotificationsPressed ?? () {
-          Navigator.pushNamed(context, '/notifications');
-        },
+      leading: Semantics(
+        label: "Notificações",
+        hint: "Toque para abrir suas notificações",
+        button: true,
+        child: IconButton(
+          tooltip: "Notificações",
+          icon: Icon(notificationsIcon, color: AppColors.icon, size: 36),
+          onPressed: onNotificationsPressed ?? () {
+            Navigator.pushNamed(context, '/notifications');
+          },
+        ),
       ),
       actions: [
-        IconButton(
-          icon: Icon(settingsIcon, color: AppColors.icon, size: 36,),
-          onPressed: onSettingsPressed ?? () {
-            Navigator.pushNamed(context, '/config');
-          },
+        Semantics(
+          label: "Configurações",
+          hint: "Toque para abrir a tela de configurações",
+          button: true,
+          child: IconButton(
+            tooltip: "Configurações",
+            icon: Icon(settingsIcon, color: AppColors.icon, size: 36),
+            onPressed: onSettingsPressed ?? () {
+              Navigator.pushNamed(context, '/config');
+            },
+          ),
         ),
       ],
     );
