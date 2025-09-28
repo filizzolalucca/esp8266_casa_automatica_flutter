@@ -30,9 +30,13 @@ class HomeScreen extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final room = vm.rooms[index];
-                      return GestureDetector(
-                        onTap: () => _showRoomDialog(context, room, vm),
-                        child: RoomCard(room: room),
+                      return Semantics(
+                        button: true,
+                        label: "Abrir configurações do ${room.name}",
+                        child: GestureDetector(
+                          onTap: () => _showRoomDialog(context, room, vm),
+                          child: RoomCard(room: room),
+                        ),
                       );
                     },
                     childCount: vm.rooms.length,
