@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
 import 'package:home_controll_app/modules/home/views/home_screen.dart';
+import 'package:home_controll_app/modules/settings/view_model/security_view_model.dart';
+import 'package:home_controll_app/modules/settings/views/config_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'utils/injection_container.dart';
@@ -20,11 +23,21 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
+
+        ChangeNotifierProvider.value(
+          value: getIt<SecurityViewModel>(), // pega a instância do GetIt
+        ),
       ],
-      child: const MaterialApp(
-        title: 'Casa Inteligente',
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
+        title: 'Casa Inteligente',
+        theme: ThemeData.dark(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const HomeScreen(),
+          '/config': (context) => const ConfigScreen(),
+          // Adicione '/notifications' se tiver a tela
+        },
       ),
     );
   }

@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
       builder: (context, vm, _) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          backgroundColor: const Color(0xFF1B1B19),
+          backgroundColor: AppColors.background,
           appBar: const CustomHomeAppBar(),
           body: CustomScrollView(
             slivers: [
@@ -92,7 +92,7 @@ class HomeScreen extends StatelessWidget {
       builder: (_) {
         return Consumer<HomeViewModel>(
           builder: (context, vm, child) {
-            final isOn = vm.lights[room.feedKey] ?? false;
+            final isOn = vm.lights[room.feedKey.toLowerCase()] ?? false;
 
             return Dialog(
               shape: RoundedRectangleBorder(

@@ -9,7 +9,7 @@ class AppColors {
   static const Color icon = Color(0xFFFFFFFF);
 
   // Cores de fundo
-  static const Color background = Color(0xFF292827);
+  static const Color background = Color(0xFF1B1B19);
   static const Color black33 = Color(0x54000000);
  
   // Cores dos gradientes

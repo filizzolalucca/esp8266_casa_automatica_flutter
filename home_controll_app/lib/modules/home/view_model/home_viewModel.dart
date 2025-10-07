@@ -19,7 +19,6 @@ class HomeViewModel extends ChangeNotifier {
   ];
   List<RoomItem> get rooms => List.unmodifiable(_rooms);
 
-  // 🔹 Estado das luzes (true = ligada, false = desligada)
   final Map<String, bool> _lights = {};
   Map<String, bool> get lights => _lights;
 
@@ -28,7 +27,7 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> _connect() async {
-    await _mqtt.connect(); // conecta em segundo plano
+    await _mqtt.connect();
     _mqtt.subscribe(AdafruitUtils.feedTemperatura);
     _mqtt.subscribe(AdafruitUtils.feedUmidade);
 
@@ -40,6 +39,8 @@ class HomeViewModel extends ChangeNotifier {
 
     _mqtt.messages.listen((message) {
       message.forEach((topic, value) {
+
+        debugPrint('🔔 feed extraido: $topic -> $value');
         if (topic.endsWith(AdafruitUtils.feedTemperatura)) {
           _data = SensorData(
             temperature: double.tryParse(value) ?? 0,
@@ -51,25 +52,27 @@ class HomeViewModel extends ChangeNotifier {
             humidity: double.tryParse(value) ?? 0,
           );
         } else if (
-          topic == AdafruitUtils.feedL1 ||
-          topic == AdafruitUtils.feedL2 ||
-          topic == AdafruitUtils.feedL3) {
-            _lights[topic] = value == "ON";
+          topic.endsWith(AdafruitUtils.feedL1) ||
+          topic.endsWith(AdafruitUtils.feedL2) ||
+          topic.endsWith(AdafruitUtils.feedL3)) {
+            final feedKey = topic.split('/').last.toLowerCase(); // <── extrai apenas "l1"
+            final isOn = (value == "1" || value.toUpperCase() == "ON");
+            _lights[feedKey] = isOn; // <── salva usando a mesma chave que a UI usa
+            debugPrint('💡 Estado salvo: $feedKey = $isOn');
         }
       });
       notifyListeners();
     });
   }
 
-  // 🔹 Alterna estado da luz
   void toggleLight(String roomFeedKey) {
-    print("chega aqui rooomId: $roomFeedKey");
-    final current = _lights[roomFeedKey] ?? false;
-    final newState = !current;
+   final key = roomFeedKey.toLowerCase();
+  final current = _lights[key] ?? false;
+  final newState = !current;
 
-    print("Trocando $roomFeedKey para ${newState ? "ON" : "OFF"}");
-    _lights[roomFeedKey] = newState;
-    _mqtt.publish(roomFeedKey, newState ? "1" : "0");
-    notifyListeners();
+  print("Trocando $key para ${newState ? "ON" : "OFF"}");
+  _lights[key] = newState;
+  _mqtt.publish(key, newState ? "1" : "0");
+  notifyListeners();
   }
 }
