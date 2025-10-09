@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -21,7 +22,8 @@ class AdafruitMqttService {
     _client.port = AdafruitUtils.port;
     _client.keepAlivePeriod = 20;
     _client.logging(on: false);
-    _client.secure = false;
+    _client.secure = true;
+    _client.securityContext = SecurityContext.defaultContext;
 
     _client.onDisconnected = () {
       _connected = false;
