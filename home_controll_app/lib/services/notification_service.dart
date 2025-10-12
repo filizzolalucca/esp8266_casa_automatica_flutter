@@ -11,29 +11,42 @@ class NotificationService {
   List<AppNotification> get history => List.unmodifiable(_history);
 
 
-Future<void> init() async {
-  const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+  Future<void> init() async {
+    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  const ios = DarwinInitializationSettings(
-    requestAlertPermission: true,
-    requestBadgePermission: true,
-    requestSoundPermission: true,
-  );
+    const ios = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
 
-  const initSettings = InitializationSettings(android: android, iOS: ios);
-  await _localNotifications.initialize(initSettings);
+    const initSettings = InitializationSettings(android: android, iOS: ios);
+    await _localNotifications.initialize(initSettings);
 
-  if (Platform.isAndroid) {
-    final androidImplementation = _localNotifications
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-    final granted = await androidImplementation?.requestNotificationsPermission();
-    debugPrint('🔔 Permissão de notificação: $granted');
+    if (Platform.isAndroid) {
+      final androidImplementation = _localNotifications
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      final granted = await androidImplementation?.requestNotificationsPermission();
+      debugPrint('🔔 Permissão de notificação: $granted');
+    }
+
+    // Solicita permissão no iOS (simulador e físico)
+    if (Platform.isIOS) {
+      final iosImpl = _localNotifications
+      .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      final granted = await iosImpl?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      debugPrint('🔔 Permissão de notificação iOS: $granted');
+    }
   }
-}
 
   Future<void> send(AppNotification notification) async {
     _history.add(notification);
+
+    final notificationId = DateTime.now().millisecondsSinceEpoch % 100000;
 
     const androidDetails = AndroidNotificationDetails(
       'home_security_channel', // ID único
@@ -46,13 +59,27 @@ Future<void> init() async {
       );
 
     // Configurações para iOS
-    const iosDetails = DarwinNotificationDetails();
+      const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+       // Adicione para iOS
+    badgeNumber: 1,
+    threadIdentifier: 'home-security',
+    );
 
+     try {
     await _localNotifications.show(
-      0,
+      notificationId,
       notification.title,
       notification.description,
       NotificationDetails(android: androidDetails, iOS: iosDetails),
+      payload: '${notification.type.toString()}_${notification.timestamp.millisecondsSinceEpoch}',
     );
+    
+    debugPrint('✅ Notificação enviada: ${notification.title}');
+  } catch (e) {
+    debugPrint('❌ Erro ao enviar notificação: $e');
+  }
   }
 }

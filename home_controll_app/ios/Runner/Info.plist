@@ -16,6 +16,8 @@
 	<string>home_controll_app</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>O app precisa enviar notificações para alertas de segurança e presença.</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>

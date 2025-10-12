@@ -1,6 +1,6 @@
 class AdafruitUtils {
   static const String username = "FilizzolaLucca";
-  static const String key = "aio_VbOk93BPx9cYXJXtAIycvT0Ei6Ko";
+  static const String key = "aio_KWfI86tyo28tIu6AZZJaR4lqPWkk";
   static const String server = "io.adafruit.com";
   static const int port = 8883;
 

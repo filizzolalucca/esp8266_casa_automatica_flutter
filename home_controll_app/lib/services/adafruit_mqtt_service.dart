@@ -9,6 +9,14 @@ import '../utils/adafruit_utils.dart';
 class AdafruitMqttService {
   late MqttServerClient _client;
   bool _connected = false;
+  bool get isConnected => _connected;
+
+  Future<void> reconnectIfNeeded() async {
+    if (!_connected) {
+      debugPrint('🔄 Reconnectando ao Adafruit IO...');
+      await connect();
+    }
+  }
 
   // Stream broadcast para múltiplos listeners
   final _streamController = StreamController<Map<String, String>>.broadcast();
