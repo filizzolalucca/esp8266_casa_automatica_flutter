@@ -10,6 +10,7 @@ class NotificationService {
 
   List<AppNotification> get history => List.unmodifiable(_history);
 
+  void clearAll() => _history.clear();
 
   Future<void> init() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');

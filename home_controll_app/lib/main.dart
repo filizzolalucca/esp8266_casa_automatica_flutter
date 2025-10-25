@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:home_controll_app/modules/home/view_model/home_viewModel.dart';
 import 'package:home_controll_app/modules/home/views/home_screen.dart';
+import 'package:home_controll_app/modules/notification/view_model/notification_viewModel.dart';
+import 'package:home_controll_app/modules/notification/views/notification_screen.dart';
 import 'package:home_controll_app/modules/settings/view_model/security_view_model.dart';
 import 'package:home_controll_app/modules/settings/views/config_screen.dart';
 import 'package:home_controll_app/services/notification_service.dart';
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
 
         ChangeNotifierProvider.value(
           value: getIt<SecurityViewModel>(), // pega a instância do GetIt
@@ -37,8 +40,8 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const HomeScreen(),
+          '/notifications': (context) => const NotificationsScreen(),
           '/config': (context) => const ConfigScreen(),
-          // Adicione '/notifications' se tiver a tela
         },
       ),
     );

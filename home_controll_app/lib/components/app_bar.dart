@@ -24,7 +24,7 @@ class CustomBackAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading: Semantics(
         label: "Voltar",
-        hint: "Toque para voltar",
+        hint: "Toque para voltar para home",
         button: true,
         child: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.icon, size: 36),
