@@ -7,10 +7,24 @@ import 'package:home_controll_app/services/notification_service.dart';
 class NotificationViewModel extends ChangeNotifier {
   final NotificationService _notificationService = GetIt.I<NotificationService>();
 
-  List<AppNotification> get notifications => _notificationService.history.reversed.toList();
+  List<AppNotification> get notifications =>
+      List.unmodifiable(_notificationService.history.reversed);
+
+  NotificationViewModel() {
+    _notificationService.addListener(_onNotificationsChanged);
+  }
+
+  void _onNotificationsChanged() {
+    notifyListeners();
+  }
 
   void clearAll() {
     _notificationService.clearAll();
-    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _notificationService.removeListener(_onNotificationsChanged);
+    super.dispose();
   }
 }

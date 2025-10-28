@@ -1,16 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_controll_app/modules/notification/model/app_notification.dart';
 
-class NotificationService {
+class NotificationService extends ChangeNotifier {
   final _localNotifications = FlutterLocalNotificationsPlugin();
   final List<AppNotification> _history = [];
 
   List<AppNotification> get history => List.unmodifiable(_history);
-
-  void clearAll() => _history.clear();
 
   Future<void> init() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -44,8 +42,15 @@ class NotificationService {
     }
   }
 
+    void clearAll() {
+      _history.clear();
+      notifyListeners();
+    } 
+
+
   Future<void> send(AppNotification notification) async {
     _history.add(notification);
+    notifyListeners();
 
     final notificationId = DateTime.now().millisecondsSinceEpoch % 100000;
 

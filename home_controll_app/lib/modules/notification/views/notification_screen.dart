@@ -21,8 +21,8 @@ class NotificationsScreen extends StatelessWidget {
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: CustomBackAppBar(
-            title: "Notificações",
-            onBackPressed: () => Navigator.of(context).pop(),
+              title: "Notificações",
+              onBackPressed: () => Navigator.of(context).pop(),
             ),
             body: history.isEmpty
                 ? Center(
@@ -45,6 +45,7 @@ class NotificationsScreen extends StatelessWidget {
                           label: "Lista de notificações",
                           hint: "Arraste para cima ou para baixo para navegar pelas notificações",
                           child: ListView.separated(
+                            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
                             itemCount: history.length,
                             separatorBuilder: (_, __) => Divider(
                               color: AppColors.grey800,
@@ -68,11 +69,12 @@ class NotificationsScreen extends StatelessWidget {
                               backgroundColor: AppColors.grey800,
                               foregroundColor: AppColors.textPrimary,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(24),
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             ),
-                            icon: const Icon(Icons.delete_outline, color: AppColors.textPrimary),
+                            icon: const Icon(Icons.delete_outline,
+                                color: AppColors.textPrimary, size: 24),
                             label: const TextApp(
                               text: 'Limpar',
                               color: AppColors.textPrimary,

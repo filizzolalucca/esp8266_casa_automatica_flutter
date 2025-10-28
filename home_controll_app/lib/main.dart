@@ -24,6 +24,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final notificationService = GetIt.I<NotificationService>();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
