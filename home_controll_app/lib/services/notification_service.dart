@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_controll_app/modules/notification/model/app_notification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService extends ChangeNotifier {
   final _localNotifications = FlutterLocalNotificationsPlugin();
@@ -20,72 +21,101 @@ class NotificationService extends ChangeNotifier {
     );
 
     const initSettings = InitializationSettings(android: android, iOS: ios);
-    await _localNotifications.initialize(initSettings);
+
+    await _localNotifications.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (response) {
+        debugPrint('🔔 Notificação clicada: ${response.payload}');
+      },
+    );
 
     if (Platform.isAndroid) {
-      final androidImplementation = _localNotifications
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-      final granted = await androidImplementation?.requestNotificationsPermission();
-      debugPrint('🔔 Permissão de notificação: $granted');
+      final androidImpl = _localNotifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      await androidImpl?.requestNotificationsPermission();
     }
 
-    // Solicita permissão no iOS (simulador e físico)
     if (Platform.isIOS) {
       final iosImpl = _localNotifications
-      .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
-      final granted = await iosImpl?.requestPermissions(
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+
+      await iosImpl?.requestPermissions(
         alert: true,
         badge: true,
         sound: true,
       );
-      debugPrint('🔔 Permissão de notificação iOS: $granted');
     }
+
+    await _loadHistory(); // ✅ Carrega histórico salvo
   }
 
-    void clearAll() {
-      _history.clear();
-      notifyListeners();
-    } 
+  Future<void> _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = prefs.getStringList('notifications') ?? [];
 
+    _history
+      ..clear()
+      ..addAll(
+        jsonList.map(
+          (json) => AppNotification.fromJson(jsonDecode(json)),
+        ),
+      );
+
+    notifyListeners();
+  }
+
+  Future<void> _saveHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = _history.map((n) => jsonEncode(n.toJson())).toList();
+    await prefs.setStringList('notifications', jsonList);
+  }
 
   Future<void> send(AppNotification notification) async {
     _history.add(notification);
+    await _saveHistory();
     notifyListeners();
 
-    final notificationId = DateTime.now().millisecondsSinceEpoch % 100000;
+    final notificationId =
+        DateTime.now().millisecondsSinceEpoch.remainder(100000);
 
     const androidDetails = AndroidNotificationDetails(
-      'home_security_channel', // ID único
-      'Notificações de Segurança', // Nome do canal
-      channelDescription: 'Alertas de presença e campainha da sua casa inteligente',
+      'home_security_channel',
+      'Notificações de Segurança',
+      channelDescription:
+          'Alertas de presença e campainha da sua casa inteligente',
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
-      );
+    );
 
-    // Configurações para iOS
-      const iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-       // Adicione para iOS
-    badgeNumber: 1,
-    threadIdentifier: 'home-security',
+      badgeNumber: 1,
+      threadIdentifier: 'home-security',
     );
 
-     try {
     await _localNotifications.show(
       notificationId,
       notification.title,
       notification.description,
       NotificationDetails(android: androidDetails, iOS: iosDetails),
-      payload: '${notification.type.toString()}_${notification.timestamp.millisecondsSinceEpoch}',
+      payload:
+          '${notification.type.index}_${notification.timestamp.toIso8601String()}',
     );
-    
-    debugPrint('✅ Notificação enviada: ${notification.title}');
-  } catch (e) {
-    debugPrint('❌ Erro ao enviar notificação: $e');
+
+    debugPrint('✅ Notificação enviada e salva: ${notification.title}');
   }
+
+  Future<void> clearAll() async {
+    _history.clear();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('notifications');
+    notifyListeners();
   }
 }
