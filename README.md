@@ -11,6 +11,12 @@ This is the app side of our final-year project (TCC), built by Henrique Resende 
   <img src="https://img.shields.io/badge/platforms-Android%20%7C%20iOS-lightgrey" alt="Platforms">
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/rooms.jpg" alt="Rooms and climate" width="250">
+  &nbsp;
+  <img src="docs/screenshots/light-control.jpg" alt="Light control" width="250">
+</p>
+
 > The app's interface is in Brazilian Portuguese.
 
 ## Features
